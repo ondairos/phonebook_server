@@ -1,6 +1,9 @@
 const express = require('express')
 const app = express()
 const cors = require('cors')
+require('dotenv').config();
+
+const mongodbUrl = process.env.MONGO_URI;
 
 const requestLogger = (request, response, next) => {
     console.log('Method:', request.method)
@@ -72,7 +75,7 @@ app.get('/api/persons/:id', (request, response) => {
 app.get('/info', (request, response) => {
     number_persons = data.length
     date = new Date();
-    response.end(`<p>Phonebook has info for ${number_persons} people!</p><p>The date is: ${date}</p>`)
+    response.end(`<p>Phonebook has info for ${number_persons} people!</p><p>The date is: ${date}.</p>`)
 })
 
 
