@@ -110,13 +110,20 @@ app.post('/api/persons', (request, response) => {
 
 // Delete person route
 app.delete('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id);
-    const deletedPerson = data.find(element => element.id === id)
-    console.log(`Deleted person with id: ${deletedPerson.id}`);
-
-    data = data.filter(element => element.id !== id)
-    response.status(204).end()
-})
+    const id = request.params.id;
+    // findByIdAndDelete from mongoose to delete
+    Person.findByIdAndDelete(id)
+        .then(deletedPerson => {
+            if (!deletedPerson) {
+                return response.status(404).json({ error: 'Person not found' });
+            }
+            console.log(`Deleted person with id: ${deletedPerson._id}`);
+            response.status(204).end()
+        })
+        .catch(error => {
+            response.status(500).json({ error: error.message });
+        });
+});
 
 // unknown route middleware
 const unknownEndpoint = (request, response) => {
