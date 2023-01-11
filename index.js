@@ -1,6 +1,10 @@
 const express = require('express')
 const app = express()
-const cors = require('cors')
+const cors = require('cors');
+require('dotenv').config();
+// mongo db
+const Person = require('./models/person');
+
 
 const requestLogger = (request, response, next) => {
     console.log('Method:', request.method)
@@ -14,6 +18,7 @@ app.use(express.json())
 
 app.use(requestLogger)
 
+// cross origin for frontend-backend
 app.use(cors())
 
 app.use(express.static('build'))
@@ -50,74 +55,75 @@ app.get('/', (request, response) => {
 
 // Implement a Node application that returns a hardcoded list of phonebook entries from the address http://localhost:3001/api/persons.
 app.get('/api/persons', (request, response) => {
-    response.json(data)
+    Person.find({}).then(persons => {
+        response.json(persons)
+    })
 })
 
 
 // show person route
 app.get('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id);
-    const person = data.find(element => {
-        return element.id === id
-    })
-
-    if (person) {
+    Person.findById(request.params.id).then(person => {
+        if (!person) {
+            return response.status(404).json({ error: 'person not found' });
+        }
         response.json(person)
-    } else {
-        response.status(400).end()
-    }
+    }).catch(error => {
+        response.redirect('/api/persons')
+    })
 })
 
 // info route
 app.get('/info', (request, response) => {
     number_persons = data.length
     date = new Date();
-    response.end(`<p>Phonebook has info for ${number_persons} people!</p><p>The date is: ${date}</p>`)
+    response.end(`<p>Phonebook has info for ${number_persons} people!</p><p>The date is: ${date}.</p>`)
 })
 
 
 // add person route
-const generateId = () => {
-    const maxId = data.length > 0 ? Math.max(...data.map(element => element.id)) : 0;
-    return maxId
-}
+// const generateId = () => {
+//     const maxId = data.length > 0 ? Math.max(...data.map(element => element.id)) : 0;
+//     return maxId
+// }
+
 app.post('/api/persons', (request, response) => {
     const body = request.body;
-    console.log(body);
-    let testPersonName = data.map(element => element.name == body.name)
-    console.log(testPersonName);
 
-    // no body error
-    if (testPersonName.some(element => element === true)) {
-        return response.status(400).json({ error: "name must be unique!" })
-    }
-
-    // Check if number is an empty string
-    if (body.number === "") {
-        return response.status(400).json({ error: "You must enter a number!" });
+    if (body.name === undefined) {
+        return response.status(400).json({ error: "name is missing!" })
+    } else if (body.number === undefined) {
+        return response.status(400).json({ error: "number is missing!" })
     }
 
     // create person object
-    const person = {
-        id: generateId,
+    const person = new Person({
         name: body.name,
         number: body.number
-    }
+    })
 
-    // add person to data
-    data = data.concat(person);
-    response.json(person)
+    // add person to mongo db
+    person.save().then(savedPerson => {
+        response.json(savedPerson)
+    });
 })
 
 // Delete person route
 app.delete('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id);
-    const deletedPerson = data.find(element => element.id === id)
-    console.log(`Deleted person with id: ${deletedPerson.id}`);
-
-    data = data.filter(element => element.id !== id)
-    response.status(204).end()
-})
+    const id = request.params.id;
+    // findByIdAndDelete from mongoose to delete
+    Person.findByIdAndDelete(id)
+        .then(deletedPerson => {
+            if (!deletedPerson) {
+                return response.status(404).json({ error: 'Person not found' });
+            }
+            console.log(`Deleted person with id: ${deletedPerson._id}`);
+            response.status(204).end()
+        })
+        .catch(error => {
+            response.status(500).json({ error: error.message });
+        });
+});
 
 // unknown route middleware
 const unknownEndpoint = (request, response) => {
