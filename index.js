@@ -1,28 +1,10 @@
 const express = require('express')
 const app = express()
 const cors = require('cors');
-const { default: mongoose, mongo } = require('mongoose');
 require('dotenv').config();
+// mongo db
+const Person = require('./models/person');
 
-// mongoose init
-const mongodbUrl = process.env.MONGO_URI;
-mongoose.connect(mongodbUrl)
-
-const personSchema = new mongoose.Schema({
-    name: String,
-    number: Number,
-})
-
-// set the schema to not show the __v and to show the id value as string
-personSchema.set('toJSON', {
-    transform: (document, returnedObject) => {
-        returnedObject.id = returnedObject._id.toString()
-        delete returnedObject._id
-        delete returnedObject.__v
-    }
-})
-
-const Person = mongoose.model('Person', personSchema)
 
 const requestLogger = (request, response, next) => {
     console.log('Method:', request.method)
@@ -36,6 +18,7 @@ app.use(express.json())
 
 app.use(requestLogger)
 
+// cross origin for frontend-backend
 app.use(cors())
 
 app.use(express.static('build'))
