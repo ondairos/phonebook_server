@@ -49,22 +49,3 @@ mongoose
         mongoose.connection.close()
     })
     .catch((err) => console.log(err))
-
-
-// mongoose
-//     .connect(url)
-//     .then((result) => {
-//         console.log('connected')
-//         return Note.find({ important: true });
-//     })
-//     .then(result => {
-//         if (result.length > 0) {
-//             result.forEach(note => {
-//                 console.log(note)
-//             });
-//         } else {
-//             console.log('No notes found');
-//         }
-//         mongoose.connection.close()
-//     })
-//     .catch((err) => console.log(err))
