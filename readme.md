@@ -1,39 +1,57 @@
 # Phonebook App
 
-This is a simple Node.js application that allows you to view, create, and delete phonebook entries. The phonebook entries are stored in a hardcoded list called data.
+A phonebook application that allows you to create, read, update, and delete phonebook entries.
 
-## Prerequisites
+## Getting Started
 
-Before running this application, make sure you have the following installed:
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
-- Node.js
-- npm (Node Package Manager)
+### Prerequisites
 
-## Installing
+* Node.js
+* MongoDB
+* Express.js
+* dotenv
 
-To install the required dependencies, run the following command in the root directory of the project:
+### Installing
+1. Clone the repository
 ```
- npm install
-```
-Running the app
-
-To run the app in development mode, use the following command:
-```
-npm run dev
+git clone https://github.com/username/phonebook-app.git
 ```
 
-This will start the app on port 3001. You can view the app by going to http://localhost:3001 in your web browser.
-API Endpoints
+2. Install the dependencies
+```
+npm install
+```
 
+3. Create a .env file in the root directory of the project and add the following variables:
+```
+MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/phonebook
+PORT=3001
+```
 
-The following API endpoints are available:
+4. Start the server
+```
+npm start
+```
 
-- GET /api/persons - returns a list of phonebook entries
-- DELETE /api/persons/:id - deletes a phonebook entry with the specified id
-- POST /api/persons - creates a new phonebook entry
-- DELETE /api/persons/:id - deletes a phonebook entry with the specified id
-- GET /info - returns information about the number of phonebook entries and the current date
+5. Visit [http://localhost:3001](http://localhost:3001) to see the application in action
+
+### Routes
+* **/** - Homepage
+* **/api/persons** - Get all phonebook entries
+* **/api/persons/:id** - Get a specific phonebook entry
+* **/info** - Get information about the phonebook
+* **/api/persons** - Add a new phonebook entry
+* **/api/persons/:id** - Delete a phonebook entry
+
+## Built With
+* [Node.js](https://nodejs.org/) - The JavaScript runtime used
+* [MongoDB](https://www.mongodb.com/) - The database used
+* [Express.js](https://expressjs.com/) - The web framework used
+
+## Authors
+* **Your Name** - *Initial work*
 
 ## License
-
-This project is licensed under the MIT License.
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
