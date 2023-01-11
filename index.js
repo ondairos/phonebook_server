@@ -63,16 +63,14 @@ app.get('/api/persons', (request, response) => {
 
 // show person route
 app.get('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id);
-    const person = data.find(element => {
-        return element.id === id
-    })
-
-    if (person) {
+    Person.findById(request.params.id).then(person => {
+        if (!person) {
+            return response.status(404).json({ error: 'person not found' });
+        }
         response.json(person)
-    } else {
-        response.status(400).end()
-    }
+    }).catch(error => {
+        response.redirect('/api/persons')
+    })
 })
 
 // info route
@@ -84,36 +82,30 @@ app.get('/info', (request, response) => {
 
 
 // add person route
-const generateId = () => {
-    const maxId = data.length > 0 ? Math.max(...data.map(element => element.id)) : 0;
-    return maxId
-}
+// const generateId = () => {
+//     const maxId = data.length > 0 ? Math.max(...data.map(element => element.id)) : 0;
+//     return maxId
+// }
+
 app.post('/api/persons', (request, response) => {
     const body = request.body;
-    console.log(body);
-    let testPersonName = data.map(element => element.name == body.name)
-    console.log(testPersonName);
 
-    // no body error
-    if (testPersonName.some(element => element === true)) {
-        return response.status(400).json({ error: "name must be unique!" })
-    }
-
-    // Check if number is an empty string
-    if (body.number === "") {
-        return response.status(400).json({ error: "You must enter a number!" });
+    if (body.name === undefined) {
+        return response.status(400).json({ error: "name is missing!" })
+    } else if (body.number === undefined) {
+        return response.status(400).json({ error: "number is missing!" })
     }
 
     // create person object
-    const person = {
-        id: generateId,
+    const person = new Person({
         name: body.name,
         number: body.number
-    }
+    })
 
-    // add person to data
-    data = data.concat(person);
-    response.json(person)
+    // add person to mongo db
+    person.save().then(savedPerson => {
+        response.json(savedPerson)
+    });
 })
 
 // Delete person route
