@@ -38,13 +38,13 @@ mongoose
         return Person.find({});
 
     }).then(result => {
-        if (result.length > 0) {
+        if (process.argv.length == 3) {
             console.log('Phonebook: ');
             result.forEach(person => {
-                console.log(person.name)
+                console.log(`${person.name} ${person.number}`)
             });
         } else {
-            console.log('No persons found');
+            console.log('Thank you');
         }
         mongoose.connection.close()
     })
