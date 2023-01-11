@@ -51,7 +51,7 @@ npm start
 * [Express.js](https://expressjs.com/) - The web framework used
 
 ## Authors
-* **Your Name** - *Initial work*
+Ioannis Kantiloros
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
