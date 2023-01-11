@@ -75,9 +75,12 @@ app.get('/api/persons/:id', (request, response) => {
 
 // info route
 app.get('/info', (request, response) => {
-    number_persons = data.length
-    date = new Date();
-    response.end(`<p>Phonebook has info for ${number_persons} people!</p><p>The date is: ${date}.</p>`)
+    Person.countDocuments().then(count => {
+        let numberOfEntries = count;
+        date = new Date();
+        response.end(`<p>Phonebook has info for ${numberOfEntries} people!</p><p>The date is: ${date}.</p>`)
+    }).catch(err => console.log(err));
+
 })
 
 
