@@ -50,7 +50,7 @@ let data = [
 
 // home route
 app.get('/', (request, response) => {
-    response.end("<h1>Phonebook App</h1>")
+    response.end("<h1>Phonebook App Server</h1>")
 })
 
 // Implement a Node application that returns a hardcoded list of phonebook entries from the address http://localhost:3001/api/persons.
@@ -69,7 +69,8 @@ app.get('/api/persons/:id', (request, response) => {
         }
         response.json(person)
     }).catch(error => {
-        response.redirect('/api/persons')
+        console.log(error);
+        response.status(500).redirect('/api/persons')
     })
 })
 
