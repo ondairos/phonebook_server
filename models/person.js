@@ -11,8 +11,16 @@ mongoose.connect(mongodbUrl)
     })
 
 const personSchema = new mongoose.Schema({
-    name: String,
-    number: Number,
+    name: {
+        type: String,
+        minLength: 5,
+        required: true
+    },
+    number: {
+        type: Number,
+        minLength: 3,
+        required: true
+    },
 })
 
 // set the schema to not show the __v and to show the id value as string
