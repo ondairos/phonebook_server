@@ -133,12 +133,13 @@ app.put('/api/persons/:id', (request, response) => {
     // find id of the document(person) we want to change
     const id = request.params.id
     const updatedNumber = request.body.number
-    Person.findByIdAndUpdate(id, { $set: { number: updatedNumber } }, { new: true }).then(updatedPerson => {
-        response.json(updatedPerson)
-    }).catch(error => {
-        console.log(error)
-        response.status(500).json({ error: "Error updating person" });
-    });
+    Person.findByIdAndUpdate(id, { $set: { number: updatedNumber } }, { new: true })
+        .then(updatedPerson => {
+            response.json(updatedPerson)
+        }).catch(error => {
+            console.log(error)
+            response.status(500).json({ error: "Error updating person" });
+        });
 })
 
 // unknown route middleware
