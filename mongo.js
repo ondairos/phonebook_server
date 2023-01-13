@@ -1,7 +1,8 @@
+/* eslint-disable no-undef */
 const mongoose = require('mongoose')
-require('dotenv').config();
+require('dotenv').config()
 
-const url = process.env.MONGO_URI;
+const url = process.env.MONGO_URI
 
 if (process.argv.length < 3) {
     console.log('Please provide the password as an argument: node mongo.js <password>')
@@ -23,7 +24,7 @@ const Person = mongoose.model('Person', personSchema)
 
 mongoose
     .connect(url)
-    .then((result) => {
+    .then(() => {
         console.log('connected')
 
         const person = new Person({
@@ -35,16 +36,16 @@ mongoose
     })
     .then((res) => {
         console.log(`${res.name} saved to the database!`)
-        return Person.find({});
+        return Person.find({})
 
     }).then(result => {
-        if (process.argv.length == 3) {
-            console.log('Phonebook: ');
+        if (process.argv.length === 3) {
+            console.log('Phonebook: ')
             result.forEach(person => {
                 console.log(`${person.name} ${person.number}`)
-            });
+            })
         } else {
-            console.log('Thank you');
+            console.log('Thank you')
         }
         mongoose.connection.close()
     })
