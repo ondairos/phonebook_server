@@ -109,7 +109,7 @@ app.post('/api/persons', (request, response) => {
     // add person to mongo db
     person.save().then(savedPerson => {
         response.json(savedPerson)
-    });
+    }).catch(error => next(error));
 })
 
 // Delete person route
@@ -133,12 +133,12 @@ app.put('/api/persons/:id', (request, response) => {
     // find id of the document(person) we want to change
     const id = request.params.id
     const updatedNumber = request.body.number
-    Person.findByIdAndUpdate(id, { $set: { number: updatedNumber } }, { new: true })
+    // add validators
+    Person.findByIdAndUpdate(id, { $set: { number: updatedNumber } }, { new: true, runValidators: true, context: 'query' })
         .then(updatedPerson => {
             response.json(updatedPerson)
         }).catch(error => {
-            console.log(error)
-            response.status(500).json({ error: "Error updating person" });
+            next(error);
         });
 })
 
@@ -157,6 +157,8 @@ const errorHandler = (error, request, response, next) => {
 
     if (error.name === 'CastError') {
         return response.status(400).send({ error: 'malformatted id' })
+    } else if (error.name === "ValidationError") {
+        return response.status(400).json({ error: error.message })
     }
 
     next(error)
