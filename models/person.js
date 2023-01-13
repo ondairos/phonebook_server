@@ -1,8 +1,11 @@
-const { default: mongoose, mongo } = require('mongoose');
+// eslint-disable-next-line no-unused-vars
+const { default: mongoose, mongo } = require('mongoose')
 // mongoose init
-const mongodbUrl = process.env.MONGO_URI;
+// eslint-disable-next-line no-undef
+const mongodbUrl = process.env.MONGO_URI
 
 mongoose.connect(mongodbUrl)
+    // eslint-disable-next-line no-unused-vars
     .then(result => {
         console.log('connected to MongoDB')
     })
@@ -21,7 +24,7 @@ const personSchema = new mongoose.Schema({
         minLength: 8,
         validate: {
             validator: function (v) {
-                return /\d{3}-\d{3}-\d{4}/.test(v);
+                return /\d{3}-\d{3}-\d{4}/.test(v)
             },
             message: props => `${props.value} is not a valid phone number!`
         },
