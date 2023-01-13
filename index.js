@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const cors = require('cors');
 require('dotenv').config();
+const mongoose = require('mongoose');
 // mongo db
 const Person = require('./models/person');
 
@@ -23,6 +24,21 @@ app.use(cors())
 
 app.use(express.static('build'))
 
+// error handler middleware
+const errorHandler = (error, request, response, next) => {
+    console.log(error.message)
+    if (error.name === 'CastError') {
+        return response.status(400).send({ error: 'malformatted id' })
+    } else if (error.name === 'ValidationError') {
+        return response.status(400).json({ error: error.message })
+    }
+
+    next(error)
+}
+
+
+// this has to be the last loaded middleware.
+app.use(errorHandler)
 
 // assign as let so you can change it.
 let data = [
@@ -91,7 +107,7 @@ app.get('/info', (request, response) => {
 //     return maxId
 // }
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
     const body = request.body;
 
     if (body.name === undefined) {
@@ -109,11 +125,18 @@ app.post('/api/persons', (request, response) => {
     // add person to mongo db
     person.save().then(savedPerson => {
         response.json(savedPerson)
-    }).catch(error => next(error));
+    }).catch(error => {
+        if (error instanceof mongoose.Error.ValidationError) {
+            response.status(400).json({ error: error.message })
+        }
+        else {
+            next(error)
+        }
+    });
 })
 
 // Delete person route
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response, next) => {
     const id = request.params.id;
     // findByIdAndDelete from mongoose to delete
     Person.findByIdAndDelete(id)
@@ -125,11 +148,12 @@ app.delete('/api/persons/:id', (request, response) => {
             response.status(204).end()
         })
         .catch(error => {
-            response.status(500).json({ error: error.message });
+            // response.status(500).json({ error: error.message })
+            next(error);
         });
 });
 
-app.put('/api/persons/:id', (request, response) => {
+app.put('/api/persons/:id', (request, response, next) => {
     // find id of the document(person) we want to change
     const id = request.params.id
     const updatedNumber = request.body.number
@@ -151,21 +175,6 @@ const unknownEndpoint = (request, response) => {
 app.use(unknownEndpoint)
 
 
-// error handler middleware
-const errorHandler = (error, request, response, next) => {
-    console.error(error.message)
-
-    if (error.name === 'CastError') {
-        return response.status(400).send({ error: 'malformatted id' })
-    } else if (error.name === "ValidationError") {
-        return response.status(400).json({ error: error.message })
-    }
-
-    next(error)
-}
-
-// this has to be the last loaded middleware.
-app.use(errorHandler)
 
 
 // const PORT = process.env.PORT || 3001
