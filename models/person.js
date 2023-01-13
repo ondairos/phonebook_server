@@ -1,17 +1,5 @@
 // eslint-disable-next-line no-unused-vars
 const { default: mongoose, mongo } = require('mongoose')
-// mongoose init
-// eslint-disable-next-line no-undef
-const mongodbUrl = process.env.MONGO_URI
-
-mongoose.connect(mongodbUrl)
-    // eslint-disable-next-line no-unused-vars
-    .then(result => {
-        console.log('connected to MongoDB')
-    })
-    .catch((error) => {
-        console.log('error connecting to MongoDB:', error.message)
-    })
 
 const personSchema = new mongoose.Schema({
     name: {
