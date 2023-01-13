@@ -2,9 +2,7 @@ const personsRouter = require('express').Router()
 const Person = require('../models/person')
 const mongoose = require('mongoose')
 
-// home route
-
-
+// home route uses persons conroller
 personsRouter.get('/', (request, response) => {
     Person.find({}).then(persons => {
         response.json(persons)
@@ -12,7 +10,7 @@ personsRouter.get('/', (request, response) => {
 })
 
 
-// show person route
+// show person route uses persons conroller
 personsRouter.get('/:id', (request, response) => {
     Person.findById(request.params.id)
         .then(person => {
@@ -26,19 +24,9 @@ personsRouter.get('/:id', (request, response) => {
         })
 })
 
-// info route
-personsRouter.get('/info', (request, response) => {
-    Person.countDocuments().then(count => {
-        let numberOfEntries = count
-        // eslint-disable-next-line no-undef
-        date = new Date()
-        // eslint-disable-next-line no-undef
-        response.end(`<p>Phonebook has info for ${numberOfEntries} people!</p><p>The date is: ${date}.</p>`)
-    }).catch(err => console.log(err))
-
-})
 
 
+// uses persons conroller
 personsRouter.post('/', (request, response, next) => {
     const body = request.body
 
@@ -67,7 +55,7 @@ personsRouter.post('/', (request, response, next) => {
     })
 })
 
-// Delete person route
+// Delete person route uses persons conroller
 personsRouter.delete('/:id', (request, response, next) => {
     const id = request.params.id
     // findByIdAndDelete from mongoose to delete
@@ -84,7 +72,7 @@ personsRouter.delete('/:id', (request, response, next) => {
             next(error)
         })
 })
-
+// uses persons conroller
 personsRouter.put('/:id', (request, response, next) => {
     // find id of the document(person) we want to change
     const id = request.params.id
