@@ -3,6 +3,7 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const personsRouter = require('./controllers/persons')
+const infoRouter = require('./controllers/info')
 const middleware = require('./utils/middleware')
 const logger = require('./utils/logger')
 const mongoose = require('mongoose')
@@ -22,7 +23,10 @@ app.use(express.static('build'))
 app.use(express.json())
 app.use(middleware.requestLogger)
 
+// router to handle all /api/persons routes
 app.use('/api/persons', personsRouter)
+// router to handle info page
+app.use('/info', infoRouter)
 
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)

@@ -5,7 +5,6 @@ const mongoose = require('mongoose')
 // home route
 
 
-// Implement a Node application that returns a hardcoded list of phonebook entries from the address http://localhost:3001/api/persons.
 personsRouter.get('/', (request, response) => {
     Person.find({}).then(persons => {
         response.json(persons)
@@ -15,15 +14,16 @@ personsRouter.get('/', (request, response) => {
 
 // show person route
 personsRouter.get('/:id', (request, response) => {
-    Person.findById(request.params.id).then(person => {
-        if (!person) {
-            return response.status(404).json({ error: 'person not found' })
-        }
-        response.json(person)
-    }).catch(error => {
-        console.log(error)
-        response.status(500).redirect('/')
-    })
+    Person.findById(request.params.id)
+        .then(person => {
+            if (!person) {
+                return response.status(404).json({ error: 'person not found' })
+            }
+            response.json(person)
+        }).catch(error => {
+            console.log(error)
+            response.status(500).redirect('/')
+        })
 })
 
 // info route
@@ -38,12 +38,6 @@ personsRouter.get('/info', (request, response) => {
 
 })
 
-
-// add person route
-// const generateId = () => {
-//     const maxId = data.length > 0 ? Math.max(...data.map(element => element.id)) : 0;
-//     return maxId
-// }
 
 personsRouter.post('/', (request, response, next) => {
     const body = request.body
